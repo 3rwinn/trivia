@@ -138,7 +138,8 @@ def create_app(test_config=None):
 
         return jsonify({
             'success': True,
-            'questions': [question.format() for question in questions]
+            'questions': [question.format() for question in questions],
+            'current_category': category_id
         })
 
     # Get quizzes by category

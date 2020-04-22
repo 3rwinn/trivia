@@ -74,6 +74,8 @@ The API will return four error types when requests fails:
  - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
  - Request Arguments: None
  - Returns: An object with a single key, categories, that contains an object of id: category_string key:value pairs.
+ #### Sample
+ `curl -X GET http://127.0.0.1:5000/categories`
 ```
 {
 	'1' : "Science",
@@ -89,6 +91,9 @@ The API will return four error types when requests fails:
  - Fetches all questions
  - Request arguments: None
  - Returns: a boolean for success, a list of questions, an object of categories, the number of questions, and the current category
+ 
+ #### Sample
+ `curl -X GET http://127.0.0.1:5000/questions?page=1`
 
  
 ```
@@ -184,6 +189,8 @@ The API will return four error types when requests fails:
  - Delete a specific question 
  - Requests arguments: question_id
  - Returns: a boolean for success, the id of the deleted question
+ ### Sample
+ `curl -X DELETE http://127.0.0.1:5000/questions/1`
  
  ```
 {
@@ -198,6 +205,9 @@ The API will return four error types when requests fails:
 - Request body: the question, answer, difficulty, category of the new question in JSON
 - Returns: a boolean for success
 
+### Sample
+`curl -X POST http://127.0.0.1:5000/questions -H "Content-Type: application/json" -d '{"question": "is the earth flat?", "answer": "no, the Earth is roughly a sphere.", "difficulty": 5, "category": 3}'`
+
 ```
 {
 	"success": true
@@ -206,10 +216,13 @@ The API will return four error types when requests fails:
 
 ### Post '/questions/search'
 
-- Search for questions
-- Request body: the search_term (ex: search_term: "cup")
-- Returns: a boolean for success, a question list where the question text contains the search_term
-
+ - Search for questions
+ - Request body: the search_term 
+ - Returns: a boolean for success, a question list where the question text contains the search_term
+### Sample
+```
+curl -X POST http://127.0.0.1:5000/questions/search -H "Content-Type: application/json" -d '{"search_term": "cup"}'
+```
 ```
 {
 	"success": true,
@@ -231,24 +244,79 @@ The API will return four error types when requests fails:
 	]
 }
 ```
+### Get '/categories/{cateogry_id}/questions
+ - Get questions by category id
+ - Request arguments: the category id
+ - Returns: a boolean for success, a list of questions related to the category
+ #### Sample
+ ```
+ curl -X GET http://127.0.0.1:5000/categories/3/questions
+ ```
+
+```
+{
+	"current_category": 3,
+	"questions": [
+		{
+			"answer": "Lake Victoria",
+			"category": 3,
+			"difficulty": 2,
+			"id": 13,
+			"question": "What is the largest lake in Africa?"
+		},
+		{
+			"answer": "The Palace of Versailles",
+			"category": 3,
+			"difficulty": 3,
+			"id": 14,
+			"question": "In which royal palace would you find the Hall of Mirrors?"
+		},
+		{
+
+			"answer": "Agra",
+			"category": 3,
+			"difficulty": 2,
+			"id": 15,
+			"question": "The Taj Mahal is located in which Indian city?"
+
+		},
+		{
+
+			"answer": "no, the Earth is roughly a sphere.",
+			"category": 3,
+			"difficulty": 5,
+			"id": 28,
+			"question": "is the earth flat?"
+		}
+
+	],
+	"success": true
+}
+```
 
 ### Post '/quizzes'
 
  - Get quizzes based on previous questions and category
  - Request body: a list of previous_questions, an object of question
  - Returns: one random question
+ ### Sample
+```
+curl -X POST http://127.0.0.1:5000/quizzes -H "Content-Type: application/json" -d '{"previous_questions": [], "quiz_category": {"id":"1", "type":"Science"}}'
+```
 ```
 {
-	"question": {
-		"answer": "Lake Victoria",
-		"category": 3,
-		"difficulty": 2,
-		"id": 13,
-		"question": "What is the largest lake in Africa?"
-	},
+	"question": 
+		{
+			"answer": "The Liver",
+			"category": 1,
+			"difficulty": 4,
+			"id": 20,
+			"question": "What is the heaviest organ in the human body?"
+		},
 	"success": true
 }
 ```
+
 
 
 
