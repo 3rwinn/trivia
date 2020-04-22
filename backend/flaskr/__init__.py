@@ -114,16 +114,19 @@ def create_app(test_config=None):
         search_term = body.get('search_term', '')
         look_for = '%{0}%'.format(search_term)
 
-        try:
-            questions = Question.query.filter(Question.question.ilike(look_for))
+        search_result = Question.query.filter(Question.question.ilike(look_for))
 
-            return jsonify({
-                "success": True,
-                "questions": [question.format() for question in questions]
-            })
+        questions = [question.format() for question in search_result]
 
-        except:
-            abort(400)
+        if len(questions) == 0:
+          abort(404)
+
+        return jsonify({
+            "success": True,
+            "questions": questions
+        })
+
+
 
     # Get questions by category id
     @app.route('/categories/<int:category_id>/questions')

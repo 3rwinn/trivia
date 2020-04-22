@@ -52,42 +52,204 @@ Setting the `FLASK_ENV` variable to `development` will detect file changes and r
 
 Setting the `FLASK_APP` variable to `flaskr` directs flask to use the `flaskr` directory and the `__init__.py` file to find the application. 
 
-## Tasks
+# API Reference
 
-One note before you delve into your tasks: for each endpoint you are expected to define the endpoint and response data. The frontend will be a plentiful resource because it is set up to expect certain endpoints and response data formats already. You should feel free to specify endpoints in your own way; if you do so, make sure to update the frontend or you will get some unexpected behavior. 
+## Error handling
+Errors are returned as JSON object in the following format
 
-1. Use Flask-CORS to enable cross-domain requests and set response headers. 
-2. Create an endpoint to handle GET requests for questions, including pagination (every 10 questions). This endpoint should return a list of questions, number of total questions, current category, categories. 
-3. Create an endpoint to handle GET requests for all available categories. 
-4. Create an endpoint to DELETE question using a question ID. 
-5. Create an endpoint to POST a new question, which will require the question and answer text, category, and difficulty score. 
-6. Create a POST endpoint to get questions based on category. 
-7. Create a POST endpoint to get questions based on a search term. It should return any questions for whom the search term is a substring of the question. 
-8. Create a POST endpoint to get questions to play the quiz. This endpoint should take category and previous question parameters and return a random questions within the given category, if provided, and that is not one of the previous questions. 
-9. Create error handlers for all expected errors including 400, 404, 422 and 500. 
+    {
+	    "success": False,
+	    "error": 400,
+	    "message": "bad request"
+    }
+The API will return four error types when requests fails:
 
-REVIEW_COMMENT
+ - **404**: ressource not found
+ - **422**: unprocessable
+ - **400**: bad request
+ - **405**: method not allowed
+ 
+ ## Endpoints
+ ### Get  '/categories'
+ - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
+ - Request Arguments: None
+ - Returns: An object with a single key, categories, that contains an object of id: category_string key:value pairs.
 ```
-This README is missing documentation of your endpoints. Below is an example for your endpoint to get all categories. Please use it as a reference for creating your documentation and resubmit your code. 
+{
+	'1' : "Science",
+	'2' : "Art",
+	'3' : "Geography",
+	'4' : "History",
+	'5' : "Entertainment",
+	'6' : "Sports"
+}
+```
 
-Endpoints
-GET '/categories'
-GET ...
-POST ...
-DELETE ...
+### Get '/questions'
+ - Fetches all questions
+ - Request arguments: None
+ - Returns: a boolean for success, a list of questions, an object of categories, the number of questions, and the current category
 
-GET '/categories'
-- Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
-- Request Arguments: None
-- Returns: An object with a single key, categories, that contains a object of id: category_string key:value pairs. 
-{'1' : "Science",
-'2' : "Art",
-'3' : "Geography",
-'4' : "History",
-'5' : "Entertainment",
-'6' : "Sports"}
+ 
+```
+{
+  "categories": {
+    "1": "Science", 
+    "2": "Art", 
+    "3": "Geography", 
+    "4": "History", 
+    "5": "Entertainment", 
+    "6": "Sports"
+  }, 
+  "current_category": null, 
+  "questions": [
+    {
+      "answer": "Apollo 13", 
+      "category": 5, 
+      "difficulty": 4, 
+      "id": 2, 
+      "question": "What movie earned Tom Hanks his third straight Oscar nomination, in 1996?"
+    }, 
+    {
+      "answer": "Muhammad Ali", 
+      "category": 4, 
+      "difficulty": 1, 
+      "id": 9, 
+      "question": "What boxer's original name is Cassius Clay?"
+    }, 
+    {
+      "answer": "Brazil", 
+      "category": 6, 
+      "difficulty": 3, 
+      "id": 10, 
+      "question": "Which is the only team to play in every soccer World Cup tournament?"
+    }, 
+    {
+      "answer": "Uruguay", 
+      "category": 6, 
+      "difficulty": 4, 
+      "id": 11, 
+      "question": "Which country won the first ever soccer World Cup in 1930?"
+    }, 
+    {
+      "answer": "George Washington Carver", 
+      "category": 4, 
+      "difficulty": 2, 
+      "id": 12, 
+      "question": "Who invented Peanut Butter?"
+    }, 
+    {
+      "answer": "Lake Victoria", 
+      "category": 3, 
+      "difficulty": 2, 
+      "id": 13, 
+      "question": "What is the largest lake in Africa?"
+    }, 
+    {
+      "answer": "The Palace of Versailles", 
+      "category": 3, 
+      "difficulty": 3, 
+      "id": 14, 
+      "question": "In which royal palace would you find the Hall of Mirrors?"
+    }, 
+    {
+      "answer": "Agra", 
+      "category": 3, 
+      "difficulty": 2, 
+      "id": 15, 
+      "question": "The Taj Mahal is located in which Indian city?"
+    }, 
+    {
+      "answer": "Escher", 
+      "category": 2, 
+      "difficulty": 1, 
+      "id": 16, 
+      "question": "Which Dutch graphic artist\u2013initials M C was a creator of optical illusions?"
+    }, 
+    {
+      "answer": "Mona Lisa", 
+      "category": 2, 
+      "difficulty": 3, 
+      "id": 17, 
+      "question": "La Giaconda is better known as what?"
+    }
+  ], 
+  "success": true, 
+  "total_questions": 15
+}
+ ```
+
+### Delete '/questions/{question_id}'
+
+ - Delete a specific question 
+ - Requests arguments: question_id
+ - Returns: a boolean for success, the id of the deleted question
+ 
+ ```
+{
+	"success': true,
+	"deleted": 1
+}
+```
+
+### Post '/questions'
+
+- Create a new question
+- Request body: the question, answer, difficulty, category of the new question in JSON
+- Returns: a boolean for success
 
 ```
+{
+	"success": true
+}
+```
+
+### Post '/questions/search'
+
+- Search for questions
+- Request body: the search_term (ex: search_term: "cup")
+- Returns: a boolean for success, a question list where the question text contains the search_term
+
+```
+{
+	"success": true,
+	"questions": [
+		{
+			"answer": "Brazil",
+			"category": 6,
+			"difficulty": 3,
+			"id": 10,
+			"question": "Which is the only team to play in every soccer       World Cup tournament?"
+		},
+		{
+			"answer": "Uruguay",
+			"category": 6,
+			"difficulty": 4,
+			"id": 11,
+			"question": "Which country won the first ever soccer World Cup in 1930?"
+		}
+	]
+}
+```
+
+### Post '/quizzes'
+
+ - Get quizzes based on previous questions and category
+ - Request body: a list of previous_questions, an object of question
+ - Returns: one random question
+```
+{
+	"question": {
+		"answer": "Lake Victoria",
+		"category": 3,
+		"difficulty": 2,
+		"id": 13,
+		"question": "What is the largest lake in Africa?"
+	},
+	"success": true
+}
+```
+
 
 
 ## Testing
